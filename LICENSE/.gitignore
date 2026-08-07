@@ -1,0 +1,12 @@
+# Logs
+Logs/
+
+# PowerShell VS Code
+.vscode/
+
+# Arquivos temporarios
+*.log
+
+# Windows
+Thumbs.db
+Desktop.ini
