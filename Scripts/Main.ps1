@@ -12,6 +12,15 @@ Write-Host ""
 
 $Meses = Get-Meses -PastaGravacoes $PastaGravacoes
 
+if ($Meses.Count -eq 0){
+
+    Write-Host ""
+    Write-Host "Nenhum mes encontrado na pasta de gravacoes."
+    Write-Host ""
+
+    return
+}
+
 $Resultado = Get-Retencao -Meses $Meses -MesesParaManter $MesesParaManter
 
 Write-Host ""
@@ -48,3 +57,5 @@ foreach($Mes in $Resultado.Mover){
     Write-Host "[QUARENTENA] $($Mes.Name)"
 
 }
+
+Move-ParaQuarentena -Meses $Resultado.Mover -PastaQuarentena $PastaQuarentena -ModoSimulacao $ModoSimulacao
