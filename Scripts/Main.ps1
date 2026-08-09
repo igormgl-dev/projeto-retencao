@@ -15,6 +15,17 @@ $Meses = Get-Meses -PastaGravacoes $PastaGravacoes
 $Resultado = Get-Retencao -Meses $Meses -MesesParaManter $MesesParaManter
 
 Write-Host ""
+Write-Host "Modo de execucao:"
+
+if($ModoSimulacao){
+    write-host "[SIMULACAO] Nenhuma acao sera tomada, apenas exibindo o resultado da retencao"
+}
+else {
+    write-host "[EXECUCAO] As acoes serao executadas de fato"
+}
+write-host ""
+
+Write-Host ""
 Write-Host "==============================="
 Write-Host "Meses que serao mantidos"
 Write-Host "==============================="
