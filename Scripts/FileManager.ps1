@@ -51,6 +51,7 @@ function Move-ParaQuarentena {
     foreach ($Mes in $Meses) {
 
         $Origem = $Mes.Caminho
+        $Destino = Join-Path $PastaQuarentena $Mes.Name
 
         if (-not (Test-Path -Path $Origem)) {
 
@@ -60,5 +61,13 @@ function Move-ParaQuarentena {
         }
 
         Write-Host "[Validado] Pasta de origem encontrada: $($Mes.Name)"
+
+        if (Test-Path -Path $Destino) {
+            Write-Host "[INFO] Pasta de destino já existe na quarentena: $($Mes.Name)"
+
+            continue
+        }
+
+        Write-Host "[Validado] Destino disponível. Pronto para mover: $($Mes.Name)"
     }
 }
