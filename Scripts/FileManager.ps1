@@ -63,7 +63,7 @@ function Move-ParaQuarentena {
         Write-Host "[Validado] Pasta de origem encontrada: $($Mes.Name)"
 
         if (Test-Path -Path $Destino) {
-            Write-Host "[INFO] Pasta de destino já existe na quarentena: $($Mes.Name)"
+            Write-Host "[INFO] Pasta de destino ja existe na quarentena: $($Mes.Name)"
 
             continue
         }
