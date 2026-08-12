@@ -69,5 +69,16 @@ function Move-ParaQuarentena {
         }
 
         Write-Host "[Validado] Destino disponível. Pronto para mover: $($Mes.Name)"
+
+        try {
+            Move-Item -Path $Origem -Destination $Destino -ErrorAction Stop
+
+            Write-Host "[Sucesso] Pasta movida para quarentena: $($Mes.Name)"    
+        }
+        catch {
+            Write-Host "[Erro] Falha ao mover pasta para quarentena: $($Mes.Name)"
+            Write-Host "[Erro] Detalhes: $($_.Exception.Message)"
+        }
+
     }
 }
