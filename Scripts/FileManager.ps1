@@ -68,7 +68,7 @@ function Move-ParaQuarentena {
             continue
         }
 
-        Write-Host "[Validado] Destino disponível. Pronto para mover: $($Mes.Name)"
+        Write-Host "[Validado] Destino disponivel. Pronto para mover: $($Mes.Name)"
 
         try {
             Move-Item -Path $Origem -Destination $Destino -ErrorAction Stop

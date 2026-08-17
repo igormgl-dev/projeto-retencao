@@ -6,9 +6,10 @@ $Projetos = split-path $PSScriptRoot -Parent
 
 $PastaTeste = Join-path $Projetos "TesteMovimentacao"
 
-$PastaGravacoes = Join-path $PastaTeste "Gravacoes"
-$PastaQuarentena = Join-path $PastaTeste "Quarentena"
-$PastaLogs = Join-path $PastaTeste "Logs"
+$PastaGravacoes = Join-Path $PastaTeste "Gravacoes"
+$PastaQuarentena = Join-Path $PastaTeste "Quarentena"
+$PastaLogs = Join-Path $PastaTeste "Logs"
+$PastaBackup = Join-Path $PastaTeste "BackupHash"
 
 $MesesParaManter = 3
 

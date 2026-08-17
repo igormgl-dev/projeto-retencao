@@ -9,9 +9,10 @@ $Projeto = Split-path $PSScriptRoot -Parent
 $PastaGravacoes = Join-path $Projeto "Gravacoes"
 $PastaQuarentena = Join-path $Projeto "Quarentena"
 $PastaLogs = Join-path $Projeto "Logs"
+$PastaBackup = Join-path $Projeto "BackupHash"
 
 # Configurações de retenção
 $MesesParaManter = 3
 
 # Segurança
-$ModoSimulacao = $true
+$ModoSimulacao = $false

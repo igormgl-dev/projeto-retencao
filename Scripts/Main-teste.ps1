@@ -6,6 +6,7 @@
 
 . "$PSScriptRoot\FileManager.ps1"
 . "$PSScriptRoot\RetentionManager.ps1"
+. "$PSScriptRoot\BackupManager.ps1"
 
 Write-Host ""
 Write-Host "====================================="
@@ -53,8 +54,34 @@ Write-Host "==============================="
 
 foreach ($Mes in $Resultado.Mover) {
 
-    Write-Host "[QUARENTENA] $($Mes.Name)"
+    Write-Host ""
+    Write-Host "Processando: $($Mes.Name)"
 
+    Backup-Mes `
+        -Origem $Mes.Caminho `
+        -PastaBackup $PastaBackup `
+        -NomeMes $Mes.Name `
+        -ModoSimulacao $ModoSimulacao
+
+    $BackupDoMes = Join-Path $PastaBackup $Mes.Name
+
+    $BackupValido = Testar-Backup `
+        -Origem $Mes.Caminho `
+        -Backup $BackupDoMes
+
+    if ($BackupValido) {
+
+        Write-Host "[VALIDADO] Backup aprovado: $($Mes.Name)"
+
+        Move-ParaQuarentena `
+            -Meses @($Mes) `
+            -PastaQuarentena $PastaQuarentena `
+            -ModoSimulacao $ModoSimulacao
+
+    }
+    else {
+
+        Write-Host "[ERRO] Backup nao aprovado. Movimentacao cancelada: $($Mes.Name)"
+
+    }
 }
-
-Move-ParaQuarentena -Meses $Resultado.Mover -PastaQuarentena $PastaQuarentena -ModoSimulacao $ModoSimulacao
