@@ -4,7 +4,8 @@ function Backup-Mes {
         [string]$Origem,
         [string]$PastaBackup,
         [string]$NomeMes,
-        [bool]$ModoSimulacao
+        [bool]$ModoSimulacao,
+        [string]$PastaLogs
     )
 
     $Destino = Join-Path -Path $PastaBackup $NomeMes
@@ -13,12 +14,22 @@ function Backup-Mes {
 
         Write-Host "[SIMULACAO] Faria backup de: $NomeMes"
 
+        Write-Log `
+            -Mensagem "Faria backup de: $NomeMes" `
+            -Nivel "SIMULACAO" `
+            -PastaLogs $PastaLogs
+
         return
     }
 
     if (-not (Test-Path -Path $Origem)) {
 
         Write-Host "[ERRO] Pasta de origem nao encontrada: $NomeMes"
+
+        Write-Log `
+            -Mensagem "Pasta de origem nao encontrada: $NomeMes" `
+            -Nivel "ERRO" `
+            -PastaLogs $PastaLogs
 
         return
     }
@@ -34,6 +45,11 @@ function Backup-Mes {
 
         Write-Host "[INFO] Backup ja existe: $NomeMes"
 
+        Write-Log `
+            -Mensagem "Backup ja existe: $NomeMes" `
+            -Nivel "INFO" `
+            -PastaLogs $PastaLogs
+
         return
     }
 
@@ -47,20 +63,31 @@ function Backup-Mes {
 
         Write-Host "[SUCESSO] Backup realizado com sucesso: $NomeMes"
 
+        Write-Log `
+            -Mensagem "Backup realizado com sucesso: $NomeMes" `
+            -Nivel "SUCESSO" `
+            -PastaLogs $PastaLogs
+
     }
     catch {
 
         Write-Host "[ERRO] Falha ao realizar backup: $NomeMes"
 
         Write-Host "[ERRO] Detalhes: $($_.Exception.Message)"
+
+        Write-Log `
+            -Mensagem "Falha ao realizar backup: $NomeMes | $($_.Exception.Message)" `
+            -Nivel "ERRO" `
+            -PastaLogs $PastaLogs
     }
 }
 
-function Testar-Backup {
+function Test-Backup {
 
     param (
         [string]$Origem,
-        [string]$Backup
+        [string]$Backup,
+        [string]$PastaLogs
     )
 
 
@@ -68,12 +95,22 @@ function Testar-Backup {
 
         Write-Host "[ERRO] Origem nao encontrada para validacao"
 
+        Write-Log `
+            -Mensagem "Origem nao encontrada para validacao: $Origem" `
+            -Nivel "ERRO" `
+            -PastaLogs $PastaLogs
+
         return $false
     }
 
     if (-not (Test-Path -Path $Backup)) {
 
         Write-Host "[ERRO] Backup nao encontrado para validacao"
+
+        Write-Log `
+            -Mensagem "Backup nao encontrado para validacao: $Backup" `
+            -Nivel "ERRO" `
+            -PastaLogs $PastaLogs
 
         return $false
     }
@@ -90,10 +127,20 @@ function Testar-Backup {
         Write-Host "[ERRO] Origem: $($ArquivosOrigem.Count) arquivos"
         Write-Host "[ERRO] Backup: $($ArquivosBackup.Count) arquivos"
 
+        Write-Log `
+            -Mensagem "Quantidade de arquivos diferente | Origem: $($ArquivosOrigem.Count) | Backup: $($ArquivosBackup.Count)" `
+            -Nivel "ERRO" `
+            -PastaLogs $PastaLogs
+
         return $false
     }
 
     Write-Host "[VALIDADO] Quantidade de arquivos corresponde"
+
+    Write-Log `
+        -Mensagem "Quantidade de arquivos corresponde" `
+        -Nivel "VALIDADO" `
+        -PastaLogs $PastaLogs
 
     foreach ($ArquivoOrigem in $ArquivosOrigem) {
         $CaminhoRelativo = $ArquivoOrigem.FullName.Substring($Origem.Length).TrimStart('\')
@@ -103,6 +150,11 @@ function Testar-Backup {
         if (-not (Test-Path -Path $CaminhoBackup)) {
 
             Write-Host "[ERRO] Arquivo nao encontrado no backup: $CaminhoRelativo"
+
+            Write-Log `
+                -Mensagem "Arquivo nao encontrado no backup: $CaminhoRelativo" `
+                -Nivel "ERRO" `
+                -PastaLogs $PastaLogs
 
             return $false
         }
@@ -117,6 +169,11 @@ function Testar-Backup {
 
             Write-Host "[ERRO] Backup: $($ArquivoBackup.Length) bytes"
 
+            Write-Log `
+                -Mensagem "Tamanho diferente: $CaminhoRelativo | Origem: $($ArquivoOrigem.Length) bytes | Backup: $($ArquivoBackup.Length) bytes" `
+                -Nivel "ERRO" `
+                -PastaLogs $PastaLogs
+
             return $false
         }
 
@@ -130,18 +187,33 @@ function Testar-Backup {
             Write-Host "[ERRO] Origem: $HashOrigem"
             Write-Host "[ERRO] Backup: $HashBackup"
 
+            Write-Log `
+                -Mensagem "Hash diferente: $CaminhoRelativo" `
+                -Nivel "ERRO" `
+                -PastaLogs $PastaLogs
+
             return $false
         }
 
         Write-Host "[VALIDADO] Hash corresponde: $CaminhoRelativo"
+
+        Write-Log `
+            -Mensagem "Hash corresponde: $CaminhoRelativo" `
+            -Nivel "VALIDADO" `
+            -PastaLogs $PastaLogs
     }
 
     Write-Host "[VALIDADO] Backup correspondente a origem"
 
+    Write-Log `
+        -Mensagem "Backup correspondente a origem" `
+        -Nivel "VALIDADO" `
+        -PastaLogs $PastaLogs
+
     return $true
 }
 
-function Testar-HashArquivo {
+function Test-HashArquivo {
 
     param (
         [string]$Origem,

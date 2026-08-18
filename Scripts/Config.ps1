@@ -15,4 +15,4 @@ $PastaBackup = Join-path $Projeto "BackupHash"
 $MesesParaManter = 3
 
 # Segurança
-$ModoSimulacao = $false
+$ModoSimulacao = $true
