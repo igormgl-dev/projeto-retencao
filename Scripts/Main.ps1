@@ -4,12 +4,18 @@
 . "$PSScriptRoot\FileManager.ps1"
 . "$PSScriptRoot\RetentionManager.ps1"
 . "$PSScriptRoot\BackupManager.ps1"
+. "$PSScriptRoot\LogManager.ps1"
 
 Write-Host ""
 Write-Host "====================================="
 Write-Host " Projeto Retencao de Gravacoes"
 Write-Host "====================================="
 Write-Host ""
+
+Write-Log `
+    -Mensagem "Execucao iniciada" `
+    -Nivel "INFO" `
+    -PastaLogs $PastaLogs
 
 $Meses = Get-Meses -PastaGravacoes $PastaGravacoes
 
@@ -33,11 +39,20 @@ if ($ModoSimulacao) {
 
     Write-Host "[SIMULACAO] Nenhuma acao sera tomada, apenas exibindo o resultado da retencao"
 
+    Write-Log `
+        -Mensagem "Modo de execucao: SIMULACAO" `
+        -Nivel "INFO" `
+        -PastaLogs $PastaLogs
+
 }
 else {
 
     Write-Host "[EXECUCAO] As acoes serao executadas de fato"
 
+    Write-Log `
+        -Mensagem "Modo de execucao: EXECUCAO REAL" `
+        -Nivel "INFO" `
+        -PastaLogs $PastaLogs
 }
 
 Write-Host ""
@@ -50,6 +65,11 @@ Write-Host ""
 foreach ($Mes in $Resultado.Manter) {
 
     Write-Host "[MANTER] $($Mes.Name)"
+
+    Write-Log `
+        -Mensagem "Mes mantido: $($Mes.Name)" `
+        -Nivel "INFO" `
+        -PastaLogs $PastaLogs
 
 }
 
@@ -64,11 +84,17 @@ foreach ($Mes in $Resultado.Mover) {
     Write-Host ""
     Write-Host "Processando: $($Mes.Name)"
 
+    Write-Log `
+        -Mensagem "Processando mes: $($Mes.Name)" `
+        -Nivel "INFO" `
+        -PastaLogs $PastaLogs
+
     Backup-Mes `
         -Origem $Mes.Caminho `
         -PastaBackup $PastaBackup `
         -NomeMes $Mes.Name `
-        -ModoSimulacao $ModoSimulacao
+        -ModoSimulacao $ModoSimulacao `
+        -PastaLogs $PastaLogs
 
     if ($ModoSimulacao) {
 
@@ -86,9 +112,10 @@ foreach ($Mes in $Resultado.Mover) {
             continue
         }
 
-        $BackupValido = Testar-Backup `
+        $BackupValido = Test-Backup `
             -Origem $Mes.Caminho `
-            -Backup $BackupMes
+            -Backup $BackupMes `
+            -PastaLogs $PastaLogs
 
         if (-not $BackupValido) {
 
@@ -103,5 +130,11 @@ foreach ($Mes in $Resultado.Mover) {
     Move-ParaQuarentena `
         -Meses @($Mes) `
         -PastaQuarentena $PastaQuarentena `
-        -ModoSimulacao $ModoSimulacao
+        -ModoSimulacao $ModoSimulacao `
+        -PastaLogs $PastaLogs
 }
+
+Write-Log `
+    -Mensagem "Execucao finalizada" `
+    -Nivel "INFO" `
+    -PastaLogs $PastaLogs
